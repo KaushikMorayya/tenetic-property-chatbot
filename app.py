@@ -63,9 +63,7 @@ if st.button("Ask") and user_question:
     DATABRICKS_HOST = st.secrets.get('DATABRICKS_HOST', '')
     DATABRICKS_TOKEN = st.secrets.get('DATABRICKS_TOKEN', '')
     ENDPOINT_NAME = st.secrets.get('ENDPOINT_NAME', '')
-    st.write("HOST:", DATABRICKS_HOST)
-    st.write("TOKEN:", DATABRICKS_TOKEN[:6])  # Only show first 6 characters for debugging
-    st.write("ENDPOINT:", ENDPOINT_NAME)
+
     if not DATABRICKS_HOST or not ENDPOINT_NAME or not DATABRICKS_TOKEN:
         st.error('Databricks secret configuration missing! Ensure DATABRICKS_HOST, DATABRICKS_TOKEN, and SERVING_ENDPOINT_NAME are set.')
     else:
@@ -101,6 +99,4 @@ if st.session_state['chat_history']:
     st.markdown("**Previous Chat:**")
     for q, a in st.session_state['chat_history']:
         st.markdown(f"<div style='background:#262626;padding:10px;margin-bottom:5px;border-radius:10px;color:#fff'><b>You:</b> {q}</div>", unsafe_allow_html=True)
-        st.markdown(f"<div style='background:#393619;padding:10px;margin-bottom:12px;border-radius:10px;color:#eedc82'><b>Bot:</b> {a}</div>", unsafe_allow_html=True)
-        st.markdown(f"<div style='background:#262626;padding:10px;border-radius:10px;color:#fff'><b>You:</b> {q}</div>", unsafe_allow_html=True)
         st.markdown(f"<div style='background:#393619;padding:10px;margin-bottom:12px;border-radius:10px;color:#eedc82'><b>Bot:</b> {a}</div>", unsafe_allow_html=True)
