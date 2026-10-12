@@ -102,6 +102,5 @@ if st.session_state['chat_history']:
     for q, a in st.session_state['chat_history']:
         st.markdown(f"<div style='background:#262626;padding:10px;margin-bottom:5px;border-radius:10px;color:#fff'><b>You:</b> {q}</div>", unsafe_allow_html=True)
         st.markdown(f"<div style='background:#393619;padding:10px;margin-bottom:12px;border-radius:10px;color:#eedc82'><b>Bot:</b> {a}</div>", unsafe_allow_html=True)
-:
         st.markdown(f"<div style='background:#262626;padding:10px;border-radius:10px;color:#fff'><b>You:</b> {q}</div>", unsafe_allow_html=True)
         st.markdown(f"<div style='background:#393619;padding:10px;margin-bottom:12px;border-radius:10px;color:#eedc82'><b>Bot:</b> {a}</div>", unsafe_allow_html=True)
