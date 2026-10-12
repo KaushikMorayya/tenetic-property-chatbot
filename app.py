@@ -62,19 +62,33 @@ if st.button("Ask") and user_question:
     # Read secrets from Streamlit Cloud (or env)
     DATABRICKS_HOST = st.secrets.get('DATABRICKS_HOST', '')
     DATABRICKS_TOKEN = st.secrets.get('DATABRICKS_TOKEN', '')
-    AGENT_NAME = st.secrets.get('SUPERVISOR_AGENT_NAME', '')
-    if not DATABRICKS_HOST or not AGENT_NAME or not DATABRICKS_TOKEN:
-        st.error('Databricks secret configuration missing!')
+    ENDPOINT_NAME = st.secrets.get('ENDPOINT_NAME', '')
+    st.write("HOST:", DATABRICKS_HOST)
+    st.write("TOKEN:", DATABRICKS_TOKEN[:6])  # Only show first 6 characters for debugging
+    st.write("ENDPOINT:", ENDPOINT_NAME)
+    if not DATABRICKS_HOST or not ENDPOINT_NAME or not DATABRICKS_TOKEN:
+        st.error('Databricks secret configuration missing! Ensure DATABRICKS_HOST, DATABRICKS_TOKEN, and SERVING_ENDPOINT_NAME are set.')
     else:
-        payload = {'agent_name': AGENT_NAME, 'question': user_question}
-        headers = {'Authorization': f'Bearer {DATABRICKS_TOKEN}'}
+        payload = {"input": [{"role": "user", "content": user_question}]}
+        headers = {
+            "Authorization": f"Bearer {DATABRICKS_TOKEN}",
+            "Content-Type": "application/json",
+        }
         try:
-            api_url = f"{DATABRICKS_HOST}/api/agent/invoke"
-            resp = requests.post(api_url, headers=headers, json=payload, timeout=45)
-            # Handle response
+            api_url = f"{DATABRICKS_HOST}/serving-endpoints/{ENDPOINT_NAME}/invocations"
+            resp = requests.post(api_url, headers=headers, json=payload, timeout=120)
             if resp.status_code == 200:
                 result = resp.json()
-                chat_response = result.get('answer', str(result))
+                # Extract the final assistant message from the output array
+                chat_response = "Unable to parse response."
+                for item in reversed(result.get("output", [])):
+                    if item.get("type") == "message":
+                        for c in item.get("content", []):
+                            if c.get("type") == "output_text" and c.get("text"):
+                                chat_response = c["text"]
+                                break
+                        if chat_response != "Unable to parse response.":
+                            break
                 st.session_state['chat_history'].append((user_question, chat_response))
                 st.success(chat_response)
             else:
@@ -86,5 +100,8 @@ if st.button("Ask") and user_question:
 if st.session_state['chat_history']:
     st.markdown("**Previous Chat:**")
     for q, a in st.session_state['chat_history']:
+        st.markdown(f"<div style='background:#262626;padding:10px;margin-bottom:5px;border-radius:10px;color:#fff'><b>You:</b> {q}</div>", unsafe_allow_html=True)
+        st.markdown(f"<div style='background:#393619;padding:10px;margin-bottom:12px;border-radius:10px;color:#eedc82'><b>Bot:</b> {a}</div>", unsafe_allow_html=True)
+:
         st.markdown(f"<div style='background:#262626;padding:10px;border-radius:10px;color:#fff'><b>You:</b> {q}</div>", unsafe_allow_html=True)
         st.markdown(f"<div style='background:#393619;padding:10px;margin-bottom:12px;border-radius:10px;color:#eedc82'><b>Bot:</b> {a}</div>", unsafe_allow_html=True)
