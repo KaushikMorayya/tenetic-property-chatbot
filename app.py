@@ -4,17 +4,15 @@ import pandas as pd
 
 st.set_page_config(layout="wide", page_title="TENETIC | Luxury Real Estate", page_icon="🏢", initial_sidebar_state="collapsed")
 
-# 1. Luxury Single-Page CSS, Sticky Nav & Floating Button
+# 1. Luxury CSS, Sticky Nav, Floating Button & Carousel
 st.markdown("""
 <style>
 :root {
     --gold: #d4af37; --gold-light: #f0d264; --bg-dark: #0a0a0a; --card-bg: #1a1a1a;
 }
 html, body, [class*="css"] { 
-    background-color: var(--bg-dark) !important; 
-    color: #ffffff; 
-    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
-    scroll-behavior: smooth; 
+    background-color: var(--bg-dark) !important; color: #ffffff; 
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; scroll-behavior: smooth; 
 }
 h1, h2, h3, h4 { color: var(--gold) !important; font-weight: 300; letter-spacing: 1px; }
 
@@ -44,9 +42,24 @@ h1, h2, h3, h4 { color: var(--gold) !important; font-weight: 300; letter-spacing
 /* Custom Formatting */
 .hero-text { font-size: 4.5rem; font-weight: 200; line-height: 1.1; margin-bottom: 20px; }
 .section-padding { padding: 80px 0; }
-.metric-card { background: var(--card-bg); padding: 30px; border-radius: 0px; border: 1px solid #333; text-align: center; }
+.metric-card { background: var(--card-bg); padding: 30px; border: 1px solid #333; text-align: center; }
 .metric-value { font-size: 2.5rem; color: var(--gold); font-weight: 200; }
 .metric-label { color: #888; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; margin-top: 10px; }
+
+/* CSS Carousel */
+.carousel-container {
+    display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 20px; padding: 20px 0;
+    scrollbar-width: thin; scrollbar-color: var(--gold) var(--bg-dark);
+}
+.carousel-container::-webkit-scrollbar { height: 8px; }
+.carousel-container::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 4px; }
+.carousel-item {
+    min-width: 400px; scroll-snap-align: start; background: var(--card-bg); border: 1px solid #333;
+}
+.carousel-img { width: 100%; height: 250px; object-fit: cover; }
+.carousel-info { padding: 20px; }
+.carousel-title { font-size: 1.5rem; color: var(--gold); margin: 0 0 10px 0; }
+.carousel-desc { color: #888; font-size: 0.9rem; margin: 0; line-height: 1.5; }
 
 /* Streamlit Overrides */
 div[data-testid="stToolbar"] { display: none; }
@@ -68,7 +81,6 @@ div[data-testid="stToolbar"] { display: none; }
 
 <!-- Floating Chat Button -->
 <a href="#ai-assistant" class="floating-chat-btn">💬 Ask Tenetic AI</a>
-
 <div id="home" style="margin-top: 80px;"></div>
 """, unsafe_allow_html=True)
 
@@ -82,27 +94,48 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# Data Summary Banner (Context from your Semantic Layer)
 col1, col2, col3, col4 = st.columns(4)
 with col1: st.markdown("<div class='metric-card'><div class='metric-value'>21,971</div><div class='metric-label'>Active Listings</div></div>", unsafe_allow_html=True)
 with col2: st.markdown("<div class='metric-card'><div class='metric-value'>12,755</div><div class='metric-label'>Closed Sales</div></div>", unsafe_allow_html=True)
 with col3: st.markdown("<div class='metric-card'><div class='metric-value'>347</div><div class='metric-label'>Cities Covered</div></div>", unsafe_allow_html=True)
 with col4: st.markdown("<div class='metric-card'><div class='metric-value'>150</div><div class='metric-label'>Elite Agents</div></div>", unsafe_allow_html=True)
 
-# 3. Portfolio Section
+# 3. Portfolio Section (New Carousel)
 st.markdown("<div id='portfolio' class='section-padding'></div>", unsafe_allow_html=True)
-st.markdown("<h2 style='text-align: center; margin-bottom: 50px;'>Exclusive Portfolio</h2>", unsafe_allow_html=True)
+st.markdown("<h2 style='text-align: center; margin-bottom: 20px;'>Exclusive Portfolio</h2>", unsafe_allow_html=True)
 
-port_col1, port_col2, port_col3 = st.columns(3)
-with port_col1:
-    st.image("https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=800", use_column_width=True)
-    st.markdown("<h3 style='font-size: 1.5rem; margin-top: 15px;'>The Azure Villa</h3><p style='color: #888;'>Mumbai • 5 Beds • 8,500 Sq Ft<br><strong style='color:#d4af37;'>₹24.5 Cr</strong></p>", unsafe_allow_html=True)
-with port_col2:
-    st.image("https://images.unsplash.com/photo-1600566753086-00f18efc2291?w=800", use_column_width=True)
-    st.markdown("<h3 style='font-size: 1.5rem; margin-top: 15px;'>Skyline Penthouse</h3><p style='color: #888;'>Bengaluru • 4 Beds • 5,200 Sq Ft<br><strong style='color:#d4af37;'>₹18.2 Cr</strong></p>", unsafe_allow_html=True)
-with port_col3:
-    st.image("https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800", use_column_width=True)
-    st.markdown("<h3 style='font-size: 1.5rem; margin-top: 15px;'>Heritage Estate</h3><p style='color: #888;'>Delhi • 6 Beds • 12,000 Sq Ft<br><strong style='color:#d4af37;'>₹32.0 Cr</strong></p>", unsafe_allow_html=True)
+st.markdown("""
+<div class="carousel-container">
+    <div class="carousel-item">
+        <img class="carousel-img" src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=800" alt="Villa">
+        <div class="carousel-info">
+            <h3 class="carousel-title">The Azure Villa</h3>
+            <p class="carousel-desc">Mumbai • 5 Beds • 8,500 Sq Ft<br><strong style="color:#d4af37; font-size:1.2rem;">₹24.5 Cr</strong></p>
+        </div>
+    </div>
+    <div class="carousel-item">
+        <img class="carousel-img" src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800" alt="Penthouse">
+        <div class="carousel-info">
+            <h3 class="carousel-title">Skyline Penthouse</h3>
+            <p class="carousel-desc">Bengaluru • 4 Beds • 5,200 Sq Ft<br><strong style="color:#d4af37; font-size:1.2rem;">₹18.2 Cr</strong></p>
+        </div>
+    </div>
+    <div class="carousel-item">
+        <img class="carousel-img" src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800" alt="Estate">
+        <div class="carousel-info">
+            <h3 class="carousel-title">Heritage Estate</h3>
+            <p class="carousel-desc">Delhi • 6 Beds • 12,000 Sq Ft<br><strong style="color:#d4af37; font-size:1.2rem;">₹32.0 Cr</strong></p>
+        </div>
+    </div>
+    <div class="carousel-item">
+        <img class="carousel-img" src="https://images.unsplash.com/photo-1613490908571-9ce224a98448?w=800" alt="Mansion">
+        <div class="carousel-info">
+            <h3 class="carousel-title">Coastal Retreat</h3>
+            <p class="carousel-desc">Goa • 5 Beds • 7,500 Sq Ft<br><strong style="color:#d4af37; font-size:1.2rem;">₹21.5 Cr</strong></p>
+        </div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
 # 4. Market Insights Section
 st.markdown("<div id='market-insights' class='section-padding'></div>", unsafe_allow_html=True)
@@ -125,13 +158,13 @@ with chart_col2:
     }).set_index("Month")
     st.line_chart(velocity_data, color="#f0d264")
 
-# 5. AI Assistant Section (Supervised Agent)
+# 5. AI Assistant Section (Client-Facing Copy)
 st.markdown("<div id='ai-assistant' class='section-padding'></div>", unsafe_allow_html=True)
 st.markdown("""
 <div style='background-color: #111; border: 1px solid #333; padding: 50px; text-align: center; margin-bottom: 30px;'>
     <h2>Tenetic Concierge AI</h2>
-    <p style='color: #888; max-width: 600px; margin: 0 auto 30px auto;'>
-        Our proprietary Databricks Supervisor Agent has direct access to our Semantic Layer views (<code>vw_sales_analytics</code>, <code>vw_inventory_analytics</code>). Ask any question about property performance, active inventory, or agent sales velocity.
+    <p style='color: #888; max-width: 600px; margin: 0 auto 30px auto; line-height: 1.6;'>
+        Experience real estate analytics elevated by artificial intelligence. Ask our Concierge AI about regional market trends, top-performing cities, or active property availability to receive instant, data-driven insights tailored to your portfolio goals.
     </p>
 </div>
 """, unsafe_allow_html=True)
@@ -144,15 +177,15 @@ chat_col, history_col = st.columns([2, 1])
 with chat_col:
     user_question = st.text_input("", placeholder="e.g., Which city generated the highest sales revenue last quarter?")
     
-    if st.button("Query Database") and user_question:
+    if st.button("Submit Inquiry") and user_question:
         DATABRICKS_HOST = st.secrets.get('DATABRICKS_HOST', '')
         DATABRICKS_TOKEN = st.secrets.get('DATABRICKS_TOKEN', '')
         ENDPOINT_NAME = st.secrets.get('ENDPOINT_NAME', '')
 
         if not DATABRICKS_HOST or not ENDPOINT_NAME or not DATABRICKS_TOKEN:
-            st.error('Offline Mode: Databricks credentials missing in Streamlit Cloud Secrets.')
+            st.error('Offline Mode: Authentication credentials missing.')
         else:
-            with st.spinner('Accessing Semantic Layer...'):
+            with st.spinner('Consulting intelligence network...'):
                 payload = {"input": [{"role": "user", "content": user_question}]}
                 headers = {
                     "Authorization": f"Bearer {DATABRICKS_TOKEN}",
@@ -177,26 +210,24 @@ with chat_col:
                                     
                         st.session_state['chat_history'].append((user_question, chat_response))
                     else:
-                        st.error(f"Endpoint Error {resp.status_code}: {resp.text}")
+                        st.error(f"Network Error {resp.status_code}: {resp.text}")
                 except Exception as e:
                     st.error(f"Connection Failed: {e}")
 
-    # Display the latest response directly below the input
     if st.session_state['chat_history']:
         latest_q, latest_a = st.session_state['chat_history'][-1]
         st.markdown(f"""
         <div style='background:#1a1a1a; padding:30px; border-top:3px solid #d4af37; margin-top:20px;'>
-            <h4 style='margin-top:0; font-size:12px; color:#888; text-transform:uppercase;'>AI Response</h4>
+            <h4 style='margin-top:0; font-size:12px; color:#888; text-transform:uppercase;'>Concierge Response</h4>
             <div style='font-size: 1.1rem; line-height: 1.6; color:#fff;'>{latest_a}</div>
         </div>
         """, unsafe_allow_html=True)
 
 with history_col:
-    st.markdown("<h4 style='font-size:14px; text-transform:uppercase; color:#888;'>Recent Queries</h4>", unsafe_allow_html=True)
+    st.markdown("<h4 style='font-size:14px; text-transform:uppercase; color:#888;'>Recent Inquiries</h4>", unsafe_allow_html=True)
     st.markdown("<div style='height: 400px; overflow-y: auto; padding-right:15px;'>", unsafe_allow_html=True)
     for q, a in reversed(st.session_state['chat_history'][:-1]):
         st.markdown(f"<div style='background:#111; padding:15px; margin-bottom:10px; border:1px solid #333; font-size:14px;'><b>Q:</b> {q}</div>", unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
-# Footer Spacer
 st.markdown("<div style='padding: 100px 0; text-align: center; color: #555; font-size: 12px; text-transform: uppercase;'>© 2026 TENETIC Intelligence. All Rights Reserved.</div>", unsafe_allow_html=True)
