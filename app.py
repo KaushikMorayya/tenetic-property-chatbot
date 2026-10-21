@@ -32,27 +32,25 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# 4. Define Tabs
-tab1, tab2, tab3 = st.tabs(["💬 AI Assistant", "📊 Market Insights", "ℹ️ Architecture & About"])
+# 4. Define Client-Facing Tabs Only
+tab1, tab2 = st.tabs(["💬 AI Assistant", "📊 Market Insights"])
 
 # ==========================================
 # TAB 1: AI ASSISTANT (Supervisor Agent)
 # ==========================================
 with tab1:
     st.markdown("### Ask the Data")
-    st.write("Query our 22,000+ property records. The Supervisor Agent automatically routes your request to the correct analytical tool.")
+    st.write("Query our 22,000+ property records. The AI automatically routes your request to the correct analytical tool.")
     
     if 'chat_history' not in st.session_state:
         st.session_state['chat_history'] = []
 
-    # Chat Interface Layout
     chat_col, history_col = st.columns([2, 1])
     
     with chat_col:
         user_question = st.text_input("What would you like to know about the property market?", placeholder="e.g., Which top 5 cities generated the highest sales revenue?")
         
         if st.button("Submit Query") and user_question:
-            # Securely fetch secrets matching your Streamlit Cloud configuration
             DATABRICKS_HOST = st.secrets.get('DATABRICKS_HOST', '')
             DATABRICKS_TOKEN = st.secrets.get('DATABRICKS_TOKEN', '')
             ENDPOINT_NAME = st.secrets.get('ENDPOINT_NAME', '')
@@ -60,9 +58,9 @@ with tab1:
             if not DATABRICKS_HOST or not ENDPOINT_NAME or not DATABRICKS_TOKEN:
                 st.error('System Offline: Databricks secrets are missing from Streamlit Cloud.')
             else:
-                with st.spinner('Connecting to Databricks Supervisor Agent...'):
-                    # Standard OpenAI-compatible payload format required by Databricks Agent endpoints
-                    payload = {"messages": [{"role": "user", "content": user_question}]}
+                with st.spinner('Analyzing...'):
+                    # Fixed Payload: Using "input" exactly as the Databricks error requested
+                    payload = {"input": [{"role": "user", "content": user_question}]}
                     headers = {
                         "Authorization": f"Bearer {DATABRICKS_TOKEN}",
                         "Content-Type": "application/json",
@@ -75,10 +73,16 @@ with tab1:
                             result = resp.json()
                             chat_response = "Unable to parse response."
                             
-                            # Parse standard Databricks endpoint response schema
-                            if "choices" in result and len(result["choices"]) > 0:
-                                chat_response = result["choices"][0].get("message", {}).get("content", chat_response)
-                                
+                            # Fixed Parsing: Navigating the specific Agent response schema
+                            for item in reversed(result.get("output", [])):
+                                if item.get("type") == "message":
+                                    for c in item.get("content", []):
+                                        if c.get("type") == "output_text" and c.get("text"):
+                                            chat_response = c["text"]
+                                            break
+                                    if chat_response != "Unable to parse response.":
+                                        break
+                                        
                             st.session_state['chat_history'].append((user_question, chat_response))
                             st.success("Response Received")
                         else:
@@ -121,20 +125,3 @@ with tab2:
     alts = ["Modern House", "Luxury Apartment", "Premium Estate", "Commercial Plot"]
     for i, col in enumerate(cols):
         col.image(property_images[i], use_column_width=True, caption=alts[i])
-
-# ==========================================
-# TAB 3: ARCHITECTURE
-# ==========================================
-with tab3:
-    st.markdown("### Platform Architecture")
-    st.write("TENETIC operates on a highly optimized, five-stage Medallion architecture built on Databricks Unity Catalog.")
-    st.markdown("""
-    * **1. Bronze:** 22,000 raw property JSON records fetched via API.
-    * **2. Silver:** Data cleansed and validated. 21,971 records passed.
-    * **3. Gold:** Modeled into 4 dimensions and 2 fact tables.
-    * **4. Platinum:** Denormalized into flat One Big Tables (`platinum_sales_mart`, `platinum_inventory_mart`).
-    * **5. Semantic:** Virtual views with derived metrics and Unity Catalog `COMMENT ON` metadata.
-    
-    #### Supervisor Agent Integration
-    This web application queries a Serverless Databricks endpoint running a Supervisor Agent. The Supervisor evaluates natural language inputs and routes them to subagents for execution.
-    """)
