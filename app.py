@@ -60,6 +60,27 @@ h1, h2, h3, h4 { color: var(--gold) !important; font-weight: 300; letter-spacing
 .carousel-title { font-size: 1.5rem; color: var(--gold); margin: 0 0 10px 0; }
 .carousel-desc { color: #888; font-size: 0.9rem; margin: 0; line-height: 1.5; }
 
+/* Property Listing Cards (List View) */
+.listing-card { display: flex; background: #151515; border: 1px solid #333; border-radius: 8px; margin-bottom: 25px; overflow: hidden; flex-wrap: wrap; }
+.listing-img-container { width: 40%; position: relative; min-width: 300px; flex-grow: 1; }
+.listing-img-container img { width: 100%; height: 100%; object-fit: cover; min-height: 250px; }
+.badge-verified { position: absolute; top: 15px; left: 15px; background: rgba(0,0,0,0.8); color: #fff; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; border: 1px solid #d4af37; display: flex; align-items: center; gap: 5px; }
+.listing-details { width: 60%; padding: 30px; display: flex; flex-direction: column; flex-grow: 2; min-width: 300px; }
+.listing-price { font-size: 32px; color: #fff; font-weight: bold; margin-bottom: 10px; }
+.listing-specs { color: #ccc; font-size: 16px; margin-bottom: 10px; font-weight: 300; }
+.listing-specs span { margin-right: 15px; }
+.listing-tags { color: #5bc0be; font-size: 14px; margin-bottom: 15px; }
+.listing-location { color: #888; font-size: 15px; margin-bottom: 15px; display: flex; align-items: center; gap: 5px; }
+.listing-validation { background: #222; padding: 8px 15px; border-radius: 5px; font-size: 12px; color: #aaa; width: fit-content; margin-bottom: 25px; display: flex; align-items: center; gap: 8px; }
+.listing-actions { display: flex; gap: 15px; margin-top: auto; }
+.action-btn { padding: 10px 0; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 14px; text-align: center; flex: 1; cursor: pointer; transition: 0.3s; }
+.btn-email { background: transparent; border: 1px solid #007bb5; color: #007bb5; }
+.btn-email:hover { background: rgba(0,123,181,0.1); }
+.btn-call { background: transparent; border: 1px solid #00a651; color: #00a651; }
+.btn-call:hover { background: rgba(0,166,81,0.1); }
+.btn-wa { background: #25d366; border: 1px solid #25d366; color: #fff; }
+.btn-wa:hover { background: #20bd5a; }
+
 /* Inputs & Buttons */
 div[data-testid="stToolbar"] { display: none; }
 .stTextInput>div>div>input { background-color: #1a1a1a; color: #fff; border: 1px solid #d4af37; border-radius: 0px; padding: 15px; }
@@ -75,6 +96,7 @@ div[data-testid="stToolbar"] { display: none; }
         <a href="#home">Home</a>
         <a href="#benefits">Why Us</a>
         <a href="#portfolio">Portfolio</a>
+        <a href="#listings">Properties</a>
         <a href="#market-insights">Insights</a>
         <a href="#contact">Contact</a>
     </div>
@@ -131,14 +153,14 @@ with ben3:
     </div>
     """, unsafe_allow_html=True)
 
-# 4. Portfolio Section (Fixed Images)
+# 4. Portfolio Section (Carousel)
 st.markdown("<div id='portfolio' class='section-padding'></div>", unsafe_allow_html=True)
 st.markdown("<h2 style='text-align: center; margin-bottom: 20px;'>Exclusive Portfolio</h2>", unsafe_allow_html=True)
 
 st.markdown("""
 <div class="carousel-container">
     <div class="carousel-item">
-        <img class="carousel-img" src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80" alt="Villa">
+        <img class="carousel-img" src="https://images.unsplash.com/photo-1613490908571-9ce224a98448?auto=format&fit=crop&w=800&q=80" alt="Villa">
         <div class="carousel-info">
             <h3 class="carousel-title">The Azure Villa</h3>
             <p class="carousel-desc">Mumbai • 5 Beds • 8,500 Sq Ft<br><strong style="color:#d4af37; font-size:1.2rem;">₹24.5 Cr</strong></p>
@@ -159,7 +181,7 @@ st.markdown("""
         </div>
     </div>
     <div class="carousel-item">
-        <img class="carousel-img" src="https://images.unsplash.com/photo-1613490908571-9ce224a98448?auto=format&fit=crop&w=800&q=80" alt="Mansion">
+        <img class="carousel-img" src="https://images.unsplash.com/photo-1600607686527-6fb886090705?auto=format&fit=crop&w=800&q=80" alt="Coastal">
         <div class="carousel-info">
             <h3 class="carousel-title">Coastal Retreat</h3>
             <p class="carousel-desc">Goa • 5 Beds • 7,500 Sq Ft<br><strong style="color:#d4af37; font-size:1.2rem;">₹21.5 Cr</strong></p>
@@ -168,7 +190,60 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# 5. Market Insights Section
+# 5. NEW: Detailed Property Listings (List View)
+st.markdown("<div id='listings' class='section-padding'></div>", unsafe_allow_html=True)
+st.markdown("""
+<div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 25px;">
+    <h2 style='margin: 0;'>Available Properties</h2>
+    <div style="color: #d4af37; font-size: 14px; border: 1px solid #d4af37; padding: 5px 15px; border-radius: 20px;">Sort by: <b>Popular</b> ▼</div>
+</div>
+
+<!-- Listing Card 1 -->
+<div class="listing-card">
+    <div class="listing-img-container">
+        <div class="badge-verified">✓ Tenetic Verified™</div>
+        <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="Apartment View">
+    </div>
+    <div class="listing-details">
+        <div class="listing-price">₹ 12,50,00,000</div>
+        <div class="listing-specs">
+            <span>Apartment</span> <span>🛏 3</span> <span>🛁 3</span> <span>Area: 2,450 sqft</span>
+        </div>
+        <div class="listing-tags">Full Sea View | Brand New | High Floor</div>
+        <div class="listing-location">📍 Worli Sea Face, South Mumbai, MH</div>
+        <div class="listing-validation">✦ Agent last visited this property on 18th of October</div>
+        <div class="listing-actions">
+            <div class="action-btn btn-email">✉ Email</div>
+            <div class="action-btn btn-call">📞 Call</div>
+            <div class="action-btn btn-wa">💬 WhatsApp</div>
+        </div>
+    </div>
+</div>
+
+<!-- Listing Card 2 -->
+<div class="listing-card">
+    <div class="listing-img-container">
+        <div class="badge-verified" style="background: rgba(80,80,80,0.9); border-color:#888;">✓ Checked</div>
+        <img src="https://images.unsplash.com/photo-1600566752355-35792bedcfea?auto=format&fit=crop&w=800&q=80" alt="Penthouse View">
+    </div>
+    <div class="listing-details">
+        <div class="listing-price">₹ 18,25,00,000</div>
+        <div class="listing-specs">
+            <span>Penthouse</span> <span>🛏 4</span> <span>🛁 5</span> <span>Area: 4,100 sqft</span>
+        </div>
+        <div class="listing-tags">Private Terrace | Park Facing | Skyline View</div>
+        <div class="listing-location">📍 Jubilee Hills, Central Park, Hyderabad</div>
+        <div class="listing-validation">✦ Property authenticity was validated on 12th of October</div>
+        <div class="listing-actions">
+            <div class="action-btn btn-email">✉ Email</div>
+            <div class="action-btn btn-call">📞 Call</div>
+            <div class="action-btn btn-wa">💬 WhatsApp</div>
+        </div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+
+# 6. Market Insights Section
 st.markdown("<div id='market-insights' class='section-padding'></div>", unsafe_allow_html=True)
 st.markdown("<h2 style='text-align: center; margin-bottom: 40px;'>Market Insights</h2>", unsafe_allow_html=True)
 
@@ -183,7 +258,7 @@ with chart_col2:
     velocity_data = pd.DataFrame({"Month": ["Jan", "Feb", "Mar", "Apr", "May", "Jun"], "Days": [42, 38, 35, 31, 28, 25]}).set_index("Month")
     st.line_chart(velocity_data, color="#f0d264")
 
-# 6. AI Assistant Section (Supervised Agent)
+# 7. AI Assistant Section (Supervised Agent)
 st.markdown("<div id='ai-assistant' class='section-padding'></div>", unsafe_allow_html=True)
 st.markdown("""
 <div style='background-color: #111; border: 1px solid #333; padding: 50px; text-align: center; margin-bottom: 30px;'>
@@ -249,7 +324,7 @@ with history_col:
     st.markdown("</div>", unsafe_allow_html=True)
 
 
-# 7. Contact Us Section
+# 8. Contact Us Section
 st.markdown("<div id='contact' class='section-padding'></div>", unsafe_allow_html=True)
 st.markdown("<h2 style='text-align: center; margin-bottom: 30px;'>Contact Us</h2>", unsafe_allow_html=True)
 
@@ -275,13 +350,12 @@ components.html("""
     
     if (askButton) {
         askButton.addEventListener('click', function(e) {
-            // Find the chat input box (Streamlit wraps it, so we target the aria-label)
             setTimeout(() => {
                 const inputField = parentDoc.querySelector('input[aria-label="Enter your query:"]');
                 if (inputField) {
                     inputField.focus();
                 }
-            }, 600); // Wait 600ms for the smooth scroll to finish
+            }, 600);
         });
     }
 </script>
