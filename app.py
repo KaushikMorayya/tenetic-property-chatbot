@@ -1,15 +1,14 @@
 import streamlit as st
 import requests
 import pandas as pd
+import streamlit.components.v1 as components
 
 st.set_page_config(layout="wide", page_title="TENETIC | Luxury Real Estate", page_icon="🏢", initial_sidebar_state="collapsed")
 
 # 1. Luxury CSS, Sticky Nav, Floating Button & Carousel
 st.markdown("""
 <style>
-:root {
-    --gold: #d4af37; --gold-light: #f0d264; --bg-dark: #0a0a0a; --card-bg: #1a1a1a;
-}
+:root { --gold: #d4af37; --gold-light: #f0d264; --bg-dark: #0a0a0a; --card-bg: #1a1a1a; }
 html, body, [class*="css"] { 
     background-color: var(--bg-dark) !important; color: #ffffff; 
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; scroll-behavior: smooth; 
@@ -24,7 +23,7 @@ h1, h2, h3, h4 { color: var(--gold) !important; font-weight: 300; letter-spacing
 }
 .nav-brand { font-size: 26px; font-weight: 900; letter-spacing: 3px; color: #d4af37; text-transform: uppercase; }
 .nav-links a {
-    color: #ffffff; text-decoration: none; margin-left: 40px; font-weight: 400; font-size: 14px; 
+    color: #ffffff; text-decoration: none; margin-left: 30px; font-weight: 400; font-size: 13px; 
     text-transform: uppercase; letter-spacing: 1px; transition: color 0.3s;
 }
 .nav-links a:hover { color: var(--gold); }
@@ -39,33 +38,34 @@ h1, h2, h3, h4 { color: var(--gold) !important; font-weight: 300; letter-spacing
 }
 .floating-chat-btn:hover { transform: translateY(-5px); }
 
-/* Custom Formatting */
+/* Layout Formatting */
 .hero-text { font-size: 4.5rem; font-weight: 200; line-height: 1.1; margin-bottom: 20px; }
-.section-padding { padding: 80px 0; }
+.section-padding { padding: 80px 0 40px 0; }
 .metric-card { background: var(--card-bg); padding: 30px; border: 1px solid #333; text-align: center; }
 .metric-value { font-size: 2.5rem; color: var(--gold); font-weight: 200; }
 .metric-label { color: #888; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 2px; margin-top: 10px; }
 
+/* Benefits Section Cards */
+.benefit-card { background: var(--card-bg); padding: 40px 30px; border-radius: 10px; border: 1px solid #333; text-align: center; height: 100%; transition: transform 0.3s; }
+.benefit-card:hover { transform: translateY(-5px); border-color: var(--gold); }
+.benefit-icon { font-size: 3rem; margin-bottom: 20px; }
+
 /* CSS Carousel */
-.carousel-container {
-    display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 20px; padding: 20px 0;
-    scrollbar-width: thin; scrollbar-color: var(--gold) var(--bg-dark);
-}
+.carousel-container { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 20px; padding: 20px 0; scrollbar-width: thin; scrollbar-color: var(--gold) var(--bg-dark); }
 .carousel-container::-webkit-scrollbar { height: 8px; }
 .carousel-container::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 4px; }
-.carousel-item {
-    min-width: 400px; scroll-snap-align: start; background: var(--card-bg); border: 1px solid #333;
-}
+.carousel-item { min-width: 400px; scroll-snap-align: start; background: var(--card-bg); border: 1px solid #333; }
 .carousel-img { width: 100%; height: 250px; object-fit: cover; }
 .carousel-info { padding: 20px; }
 .carousel-title { font-size: 1.5rem; color: var(--gold); margin: 0 0 10px 0; }
 .carousel-desc { color: #888; font-size: 0.9rem; margin: 0; line-height: 1.5; }
 
-/* Streamlit Overrides */
+/* Inputs & Buttons */
 div[data-testid="stToolbar"] { display: none; }
 .stTextInput>div>div>input { background-color: #1a1a1a; color: #fff; border: 1px solid #d4af37; border-radius: 0px; padding: 15px; }
-.stButton>button { background: var(--gold); color: #000; font-weight: bold; border-radius: 0px; border: none; width: 100%; padding: 10px; text-transform: uppercase; }
-.stButton>button:hover { background: var(--gold-light); }
+.stTextArea>div>div>textarea { background-color: #1a1a1a; color: #fff; border: 1px solid #333; border-radius: 0px; }
+.stButton>button { background: var(--gold); color: #000; font-weight: bold; border-radius: 0px; border: none; width: 100%; padding: 10px; text-transform: uppercase; transition: 0.3s; }
+.stButton>button:hover { background: var(--gold-light); color: #000; }
 </style>
 
 <!-- Top Navigation -->
@@ -73,20 +73,21 @@ div[data-testid="stToolbar"] { display: none; }
     <div class="nav-brand">TENETIC</div>
     <div class="nav-links">
         <a href="#home">Home</a>
-        <a href="#portfolio">Exclusive Portfolio</a>
-        <a href="#market-insights">Market Insights</a>
-        <a href="#ai-assistant">Concierge AI</a>
+        <a href="#benefits">Why Us</a>
+        <a href="#portfolio">Portfolio</a>
+        <a href="#market-insights">Insights</a>
+        <a href="#contact">Contact</a>
     </div>
 </div>
 
 <!-- Floating Chat Button -->
-<a href="#ai-assistant" class="floating-chat-btn">💬 Ask Tenetic AI</a>
+<a href="#ai-assistant" class="floating-chat-btn" id="ask-ai-btn">💬 Ask Tenetic AI</a>
 <div id="home" style="margin-top: 80px;"></div>
 """, unsafe_allow_html=True)
 
 # 2. Hero Section
 st.markdown("""
-<div class="section-padding" style="text-align: center; background-image: linear-gradient(rgba(10,10,10,0.8), rgba(10,10,10,0.9)), url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1600'); background-size: cover; background-position: center; padding: 150px 20px;">
+<div class="section-padding" style="text-align: center; background-image: linear-gradient(rgba(10,10,10,0.8), rgba(10,10,10,0.9)), url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=1600&q=80'); background-size: cover; background-position: center; padding: 150px 20px;">
     <div class="hero-text">Curated Estates.<br>Driven by Intelligence.</div>
     <p style="font-size: 1.2rem; color: #ccc; max-width: 600px; margin: 0 auto; font-weight: 300; letter-spacing: 1px;">
         Explore the world's most prestigious properties, backed by an analytical foundation of 22,000 verified listings and 12,755 closed market transactions.
@@ -100,35 +101,65 @@ with col2: st.markdown("<div class='metric-card'><div class='metric-value'>12,75
 with col3: st.markdown("<div class='metric-card'><div class='metric-value'>347</div><div class='metric-label'>Cities Covered</div></div>", unsafe_allow_html=True)
 with col4: st.markdown("<div class='metric-card'><div class='metric-value'>150</div><div class='metric-label'>Elite Agents</div></div>", unsafe_allow_html=True)
 
-# 3. Portfolio Section (New Carousel)
+# 3. Benefits of Choosing Us
+st.markdown("<div id='benefits' class='section-padding'></div>", unsafe_allow_html=True)
+st.markdown("<h2 style='text-align: center; margin-bottom: 40px;'>Benefits of Choosing Us</h2>", unsafe_allow_html=True)
+
+ben1, ben2, ben3 = st.columns(3)
+with ben1:
+    st.markdown("""
+    <div class='benefit-card'>
+        <div class='benefit-icon'>🏅</div>
+        <h3 style='font-size: 1.3rem; margin-bottom: 15px;'>Extensive Expertise</h3>
+        <p style='color: #888; font-size: 0.95rem; line-height: 1.6;'>With decades of experience in high-end property valuations and a dedicated team of specialized data engineers, TENETIC offers a wealth of market expertise. Our professionals handle diverse portfolio needs across global markets.</p>
+    </div>
+    """, unsafe_allow_html=True)
+with ben2:
+    st.markdown("""
+    <div class='benefit-card'>
+        <div class='benefit-icon'>⭐</div>
+        <h3 style='font-size: 1.3rem; margin-bottom: 15px;'>Trusted Reputation</h3>
+        <p style='color: #888; font-size: 0.95rem; line-height: 1.6;'>Recognized as an industry leader in property intelligence, our track record speaks volumes. Choosing us means opting for a trusted, reliable partner with a proven history of delivering analytical excellence.</p>
+    </div>
+    """, unsafe_allow_html=True)
+with ben3:
+    st.markdown("""
+    <div class='benefit-card'>
+        <div class='benefit-icon'>🛡️</div>
+        <h3 style='font-size: 1.3rem; margin-bottom: 15px;'>Speed & Security</h3>
+        <p style='color: #888; font-size: 0.95rem; line-height: 1.6;'>We understand the importance of efficiency and confidentiality. Our streamlined Databricks Medallion architecture enables lightning-fast insights while ensuring your portfolio data is handled with the utmost security.</p>
+    </div>
+    """, unsafe_allow_html=True)
+
+# 4. Portfolio Section (Fixed Images)
 st.markdown("<div id='portfolio' class='section-padding'></div>", unsafe_allow_html=True)
 st.markdown("<h2 style='text-align: center; margin-bottom: 20px;'>Exclusive Portfolio</h2>", unsafe_allow_html=True)
 
 st.markdown("""
 <div class="carousel-container">
     <div class="carousel-item">
-        <img class="carousel-img" src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=800" alt="Villa">
+        <img class="carousel-img" src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?auto=format&fit=crop&w=800&q=80" alt="Villa">
         <div class="carousel-info">
             <h3 class="carousel-title">The Azure Villa</h3>
             <p class="carousel-desc">Mumbai • 5 Beds • 8,500 Sq Ft<br><strong style="color:#d4af37; font-size:1.2rem;">₹24.5 Cr</strong></p>
         </div>
     </div>
     <div class="carousel-item">
-        <img class="carousel-img" src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800" alt="Penthouse">
+        <img class="carousel-img" src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80" alt="Penthouse">
         <div class="carousel-info">
             <h3 class="carousel-title">Skyline Penthouse</h3>
             <p class="carousel-desc">Bengaluru • 4 Beds • 5,200 Sq Ft<br><strong style="color:#d4af37; font-size:1.2rem;">₹18.2 Cr</strong></p>
         </div>
     </div>
     <div class="carousel-item">
-        <img class="carousel-img" src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800" alt="Estate">
+        <img class="carousel-img" src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80" alt="Estate">
         <div class="carousel-info">
             <h3 class="carousel-title">Heritage Estate</h3>
             <p class="carousel-desc">Delhi • 6 Beds • 12,000 Sq Ft<br><strong style="color:#d4af37; font-size:1.2rem;">₹32.0 Cr</strong></p>
         </div>
     </div>
     <div class="carousel-item">
-        <img class="carousel-img" src="https://images.unsplash.com/photo-1613490908571-9ce224a98448?w=800" alt="Mansion">
+        <img class="carousel-img" src="https://images.unsplash.com/photo-1613490908571-9ce224a98448?auto=format&fit=crop&w=800&q=80" alt="Mansion">
         <div class="carousel-info">
             <h3 class="carousel-title">Coastal Retreat</h3>
             <p class="carousel-desc">Goa • 5 Beds • 7,500 Sq Ft<br><strong style="color:#d4af37; font-size:1.2rem;">₹21.5 Cr</strong></p>
@@ -137,34 +168,28 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# 4. Market Insights Section
+# 5. Market Insights Section
 st.markdown("<div id='market-insights' class='section-padding'></div>", unsafe_allow_html=True)
-st.markdown("<h2 style='text-align: center; margin-bottom: 50px;'>Market Insights</h2>", unsafe_allow_html=True)
+st.markdown("<h2 style='text-align: center; margin-bottom: 40px;'>Market Insights</h2>", unsafe_allow_html=True)
 
 chart_col1, chart_col2 = st.columns(2)
 with chart_col1:
     st.markdown("<h4 style='text-align: center;'>Top Markets by Volume</h4>", unsafe_allow_html=True)
-    city_data = pd.DataFrame({
-        "City": ["Mumbai", "Delhi", "Bengaluru", "Pune", "Hyderabad"],
-        "Revenue (Billion ₹)": [47.2, 33.0, 31.6, 27.9, 22.6]
-    }).set_index("City")
+    city_data = pd.DataFrame({"City": ["Mumbai", "Delhi", "Bengaluru", "Pune", "Hyderabad"], "Revenue (Billion ₹)": [47.2, 33.0, 31.6, 27.9, 22.6]}).set_index("City")
     st.bar_chart(city_data, color="#d4af37")
 
 with chart_col2:
     st.markdown("<h4 style='text-align: center;'>Average Days on Market (Velocity)</h4>", unsafe_allow_html=True)
-    velocity_data = pd.DataFrame({
-        "Month": ["Jan", "Feb", "Mar", "Apr", "May", "Jun"],
-        "Days": [42, 38, 35, 31, 28, 25]
-    }).set_index("Month")
+    velocity_data = pd.DataFrame({"Month": ["Jan", "Feb", "Mar", "Apr", "May", "Jun"], "Days": [42, 38, 35, 31, 28, 25]}).set_index("Month")
     st.line_chart(velocity_data, color="#f0d264")
 
-# 5. AI Assistant Section (Client-Facing Copy)
+# 6. AI Assistant Section (Supervised Agent)
 st.markdown("<div id='ai-assistant' class='section-padding'></div>", unsafe_allow_html=True)
 st.markdown("""
 <div style='background-color: #111; border: 1px solid #333; padding: 50px; text-align: center; margin-bottom: 30px;'>
     <h2>Tenetic Concierge AI</h2>
-    <p style='color: #888; max-width: 600px; margin: 0 auto 30px auto; line-height: 1.6;'>
-        Experience real estate analytics elevated by artificial intelligence. Ask our Concierge AI about regional market trends, top-performing cities, or active property availability to receive instant, data-driven insights tailored to your portfolio goals.
+    <p style='color: #888; max-width: 600px; margin: 0 auto; line-height: 1.6;'>
+        Experience real estate analytics elevated by artificial intelligence. Ask our Concierge AI about regional market trends, top-performing cities, or active property availability to receive instant, data-driven insights.
     </p>
 </div>
 """, unsafe_allow_html=True)
@@ -175,7 +200,8 @@ if 'chat_history' not in st.session_state:
 chat_col, history_col = st.columns([2, 1])
 
 with chat_col:
-    user_question = st.text_input("", placeholder="e.g., Which city generated the highest sales revenue last quarter?")
+    # Adding a specific key so we can target it with JS
+    user_question = st.text_input("Enter your query:", placeholder="e.g., Which city generated the highest sales revenue last quarter?", key="chat_input")
     
     if st.button("Submit Inquiry") and user_question:
         DATABRICKS_HOST = st.secrets.get('DATABRICKS_HOST', '')
@@ -187,19 +213,12 @@ with chat_col:
         else:
             with st.spinner('Consulting intelligence network...'):
                 payload = {"input": [{"role": "user", "content": user_question}]}
-                headers = {
-                    "Authorization": f"Bearer {DATABRICKS_TOKEN}",
-                    "Content-Type": "application/json",
-                }
+                headers = {"Authorization": f"Bearer {DATABRICKS_TOKEN}", "Content-Type": "application/json"}
                 try:
-                    api_url = f"{DATABRICKS_HOST}/serving-endpoints/{ENDPOINT_NAME}/invocations"
-                    resp = requests.post(api_url, headers=headers, json=payload, timeout=120)
-                    
+                    resp = requests.post(f"{DATABRICKS_HOST}/serving-endpoints/{ENDPOINT_NAME}/invocations", headers=headers, json=payload, timeout=120)
                     if resp.status_code == 200:
-                        result = resp.json()
                         chat_response = "Unable to parse response."
-                        
-                        for item in reversed(result.get("output", [])):
+                        for item in reversed(resp.json().get("output", [])):
                             if item.get("type") == "message":
                                 for c in item.get("content", []):
                                     if c.get("type") == "output_text" and c.get("text"):
@@ -207,7 +226,6 @@ with chat_col:
                                         break
                                 if chat_response != "Unable to parse response.":
                                     break
-                                    
                         st.session_state['chat_history'].append((user_question, chat_response))
                     else:
                         st.error(f"Network Error {resp.status_code}: {resp.text}")
@@ -225,9 +243,46 @@ with chat_col:
 
 with history_col:
     st.markdown("<h4 style='font-size:14px; text-transform:uppercase; color:#888;'>Recent Inquiries</h4>", unsafe_allow_html=True)
-    st.markdown("<div style='height: 400px; overflow-y: auto; padding-right:15px;'>", unsafe_allow_html=True)
+    st.markdown("<div style='height: 300px; overflow-y: auto; padding-right:15px;'>", unsafe_allow_html=True)
     for q, a in reversed(st.session_state['chat_history'][:-1]):
         st.markdown(f"<div style='background:#111; padding:15px; margin-bottom:10px; border:1px solid #333; font-size:14px;'><b>Q:</b> {q}</div>", unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
 
-st.markdown("<div style='padding: 100px 0; text-align: center; color: #555; font-size: 12px; text-transform: uppercase;'>© 2026 TENETIC Intelligence. All Rights Reserved.</div>", unsafe_allow_html=True)
+
+# 7. Contact Us Section
+st.markdown("<div id='contact' class='section-padding'></div>", unsafe_allow_html=True)
+st.markdown("<h2 style='text-align: center; margin-bottom: 30px;'>Contact Us</h2>", unsafe_allow_html=True)
+
+contact_col1, contact_col2, contact_col3 = st.columns([1, 2, 1])
+with contact_col2:
+    st.markdown("<p style='text-align: center; color: #888; margin-bottom: 20px;'>Get in touch with our elite advisory team for bespoke portfolio solutions.</p>", unsafe_allow_html=True)
+    with st.form("contact_form"):
+        st.text_input("Full Name")
+        st.text_input("Email Address")
+        st.text_area("Message", height=120)
+        submitted = st.form_submit_button("Send Message")
+        if submitted:
+            st.success("Thank you. A TENETIC advisor will contact you shortly.")
+
+# Footer
+st.markdown("<div style='padding: 80px 0 40px 0; text-align: center; color: #555; font-size: 12px; text-transform: uppercase;'>© 2026 TENETIC Intelligence. All Rights Reserved.</div>", unsafe_allow_html=True)
+
+# JavaScript for Autofocusing the Chat Input on Floating Button Click
+components.html("""
+<script>
+    const parentDoc = window.parent.document;
+    const askButton = parentDoc.getElementById('ask-ai-btn');
+    
+    if (askButton) {
+        askButton.addEventListener('click', function(e) {
+            // Find the chat input box (Streamlit wraps it, so we target the aria-label)
+            setTimeout(() => {
+                const inputField = parentDoc.querySelector('input[aria-label="Enter your query:"]');
+                if (inputField) {
+                    inputField.focus();
+                }
+            }, 600); // Wait 600ms for the smooth scroll to finish
+        });
+    }
+</script>
+""", height=0, width=0)
