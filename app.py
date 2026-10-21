@@ -153,35 +153,35 @@ with ben3:
     </div>
     """, unsafe_allow_html=True)
 
-# 4. Portfolio Section (Carousel)
+# 4. Portfolio Section (Carousel with Fixed Image URLs)
 st.markdown("<div id='portfolio' class='section-padding'></div>", unsafe_allow_html=True)
 st.markdown("<h2 style='text-align: center; margin-bottom: 20px;'>Exclusive Portfolio</h2>", unsafe_allow_html=True)
 
 st.markdown("""
 <div class="carousel-container">
     <div class="carousel-item">
-        <img class="carousel-img" src="https://images.unsplash.com/photo-1613490908571-9ce224a98448?auto=format&fit=crop&w=800&q=80" alt="Villa">
+        <img class="carousel-img" src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80" alt="Villa">
         <div class="carousel-info">
             <h3 class="carousel-title">The Azure Villa</h3>
             <p class="carousel-desc">Mumbai • 5 Beds • 8,500 Sq Ft<br><strong style="color:#d4af37; font-size:1.2rem;">₹24.5 Cr</strong></p>
         </div>
     </div>
     <div class="carousel-item">
-        <img class="carousel-img" src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?auto=format&fit=crop&w=800&q=80" alt="Penthouse">
+        <img class="carousel-img" src="https://images.unsplash.com/photo-1512917774080-9991f1c4c750?w=800&q=80" alt="Penthouse">
         <div class="carousel-info">
             <h3 class="carousel-title">Skyline Penthouse</h3>
             <p class="carousel-desc">Bengaluru • 4 Beds • 5,200 Sq Ft<br><strong style="color:#d4af37; font-size:1.2rem;">₹18.2 Cr</strong></p>
         </div>
     </div>
     <div class="carousel-item">
-        <img class="carousel-img" src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=800&q=80" alt="Estate">
+        <img class="carousel-img" src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=800&q=80" alt="Estate">
         <div class="carousel-info">
             <h3 class="carousel-title">Heritage Estate</h3>
             <p class="carousel-desc">Delhi • 6 Beds • 12,000 Sq Ft<br><strong style="color:#d4af37; font-size:1.2rem;">₹32.0 Cr</strong></p>
         </div>
     </div>
     <div class="carousel-item">
-        <img class="carousel-img" src="https://images.unsplash.com/photo-1600607686527-6fb886090705?auto=format&fit=crop&w=800&q=80" alt="Coastal">
+        <img class="carousel-img" src="https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?w=800&q=80" alt="Coastal">
         <div class="carousel-info">
             <h3 class="carousel-title">Coastal Retreat</h3>
             <p class="carousel-desc">Goa • 5 Beds • 7,500 Sq Ft<br><strong style="color:#d4af37; font-size:1.2rem;">₹21.5 Cr</strong></p>
@@ -190,7 +190,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-# 5. NEW: Detailed Property Listings (List View)
+# 5. Detailed Property Listings (List View)
 st.markdown("<div id='listings' class='section-padding'></div>", unsafe_allow_html=True)
 st.markdown("""
 <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 25px;">
@@ -202,7 +202,7 @@ st.markdown("""
 <div class="listing-card">
     <div class="listing-img-container">
         <div class="badge-verified">✓ Tenetic Verified™</div>
-        <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?auto=format&fit=crop&w=800&q=80" alt="Apartment View">
+        <img src="https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=800&q=80" alt="Apartment View">
     </div>
     <div class="listing-details">
         <div class="listing-price">₹ 12,50,00,000</div>
@@ -224,7 +224,7 @@ st.markdown("""
 <div class="listing-card">
     <div class="listing-img-container">
         <div class="badge-verified" style="background: rgba(80,80,80,0.9); border-color:#888;">✓ Checked</div>
-        <img src="https://images.unsplash.com/photo-1600566752355-35792bedcfea?auto=format&fit=crop&w=800&q=80" alt="Penthouse View">
+        <img src="https://images.unsplash.com/photo-1600566752355-35792bedcfea?w=800&q=80" alt="Penthouse View">
     </div>
     <div class="listing-details">
         <div class="listing-price">₹ 18,25,00,000</div>
@@ -275,7 +275,6 @@ if 'chat_history' not in st.session_state:
 chat_col, history_col = st.columns([2, 1])
 
 with chat_col:
-    # Adding a specific key so we can target it with JS
     user_question = st.text_input("Enter your query:", placeholder="e.g., Which city generated the highest sales revenue last quarter?", key="chat_input")
     
     if st.button("Submit Inquiry") and user_question:
@@ -322,7 +321,6 @@ with history_col:
     for q, a in reversed(st.session_state['chat_history'][:-1]):
         st.markdown(f"<div style='background:#111; padding:15px; margin-bottom:10px; border:1px solid #333; font-size:14px;'><b>Q:</b> {q}</div>", unsafe_allow_html=True)
     st.markdown("</div>", unsafe_allow_html=True)
-
 
 # 8. Contact Us Section
 st.markdown("<div id='contact' class='section-padding'></div>", unsafe_allow_html=True)
